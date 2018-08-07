@@ -179,9 +179,10 @@ public int outputDataSource = OUTPUT_SOURCE_ODF;
 // public int outputDataSource = OUTPUT_SOURCE_BDF;
 
 // Serial output
-String serial_output_portName = "/dev/tty.usbmodem1421";  //must edit this based on the name of the serial/COM port
+String serial_output_portName = "COM5";  //der Port an den die Daten übertragen werden sollen(COM Port des Arduinos ggf. ändern.)
 Serial serial_output;
-int serial_output_baud = 9600; //baud rate from the Arduino
+//serial_output = new Serial(this, serial_output_portName, 9600); → FÜHRTE ZU FEHLERN
+int serial_output_baud = 9600; //Baudrate der Übertragung wird festgelegt
 
 //Control Panel for (re)configuring system settings
 PlotFontInfo fontInfo;
