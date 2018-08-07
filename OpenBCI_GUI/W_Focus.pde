@@ -196,12 +196,25 @@ class W_Focus extends Widget {
     }
   }
 
-  void sendFocusSerial() {
+void sendFocusSerial() {
     // ----------- if turned on, send the focused state to Arduino via serial port -----------
     if (enableSerial) {
       try {
-        serial_output.write(int(isFocused) + 48);
-        serial_output.write('\n');
+        //serial_output.write(int(isFocused) + 48); → kann gebraucht werden, wenn es interessant ist, ob jmd. fokussiert ist.
+        //die Werte für Alpha- und Beta-Wellen sind Werte zwischen etwa 0 und 2 und sind als Float-Werte deklariert.
+        //Da es jedoch nicht möglich ist, Floats über den serial Port zu schicken, müssen diese Werte in Ihrem Datentyp geändert werden.
+        //Zuerst werden die Werte mit 10000 multipliziert und dann in Integer-Werte geändert. Dadurch hat man Integer-Werte mit etwa 4-5 signifikanten Stellen.
+        //Integer-Werte können zwar gesendet werden sind aber auf Werte zwischen -128 und 127 begrenzt und sind somit nicht genau genug.
+        //Deshalb werden diese Integer-Werte in Strings konvertiert welche dann in Ihrem vollen Umfang gesendet werden können.
+        
+        serial_output.write(Integer.toString(int(10000*alpha_avg)));    //senden der konvertierten Werte von Alpha-Werten.  
+                                                                        //alpha.avg ist der Wert der Alpha-Wellen
+        serial_output.write('e');                                       //Das Senden eines 'e' dient zur Erkennung des Endes des Strings (siehe im Arduino Code)
+        println(Integer.toString(int(10000*alpha_avg)));                //Ausgabe des gesendeten Wertes im Fenster unten.
+        serial_output.write(Integer.toString(int(10000*beta_avg)));     //s.o. nur für Beta-Wellen
+        serial_output.write('e');
+        println(Integer.toString(int(10000*beta_avg)));
+
       }
       catch(RuntimeException e) {
         if (isVerbose) println("serial not present, search 'serial_output' in OpenBCI.pde and check serial settings.");
